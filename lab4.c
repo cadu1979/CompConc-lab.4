@@ -16,13 +16,16 @@ pthread_cond_t count_cond;
 /* imprime 'tudo bem?' */
 void* A(void* t)
 {
-	pthread_mutex_lock(&count_mutex);
+	puts("Inicio da thread A");
 	
+	pthread_mutex_lock(&count_mutex);
 	puts("tudo bem?");
 	count++;
 	if(count == 2) //liberar a execucao de todas as threads se 'A' e 'B' ja imprimiram suas msgs
+	{
+		puts("Thread A transmite que 'count' == 2");
 		pthread_cond_broadcast(&count_cond);
-		
+	}
 	pthread_mutex_unlock(&count_mutex);
 
 	pthread_exit(NULL);
@@ -31,13 +34,16 @@ void* A(void* t)
 /* imprime 'bom dia!' */
 void* B(void* t)
 {
-	pthread_mutex_lock(&count_mutex);
+	puts("Inicio da thread B");
 	
+	pthread_mutex_lock(&count_mutex);
 	puts("bom dia!");
 	count++;
 	if(count == 2) //liberar a execucao de todas as threads se 'A' e 'B' ja imprimiram suas msgs
+	{
+		puts("Thread B transmite que 'count' == 2");
 		pthread_cond_broadcast(&count_cond);
-		
+	}	
 	pthread_mutex_unlock(&count_mutex);
 
 	pthread_exit(NULL);
@@ -46,11 +52,15 @@ void* B(void* t)
 /* imprime 'ate mais!' */
 void* C(void* t)
 {
-	pthread_mutex_lock(&count_mutex);
-	
-	while(count < 2) //a thread espera ate que as threads 'A' e 'B' tenham imprimido suas msgs
-		pthread_cond_wait(&count_cond, &count_mutex);
+	puts("Inicio da thread C");
 
+	pthread_mutex_lock(&count_mutex);
+	while(count < 2) //a thread espera ate que as threads 'A' e 'B' tenham imprimido suas msgs
+	{
+		puts("Thread C bloqueada. Esperando 'count' chegar a 2");
+		pthread_cond_wait(&count_cond, &count_mutex);
+		puts("Thread C desbloqueada.");
+	}
 	puts("ate mais!");
 	count++;
 	pthread_mutex_unlock(&count_mutex);
@@ -61,11 +71,15 @@ void* C(void* t)
 /* imprime 'boa tarde!' */
 void* D(void* t)
 {
+	puts("Inicio da thread D");
+	
 	pthread_mutex_lock(&count_mutex);
-
 	while(count < 2) //a thread espera ate que as threads 'A' e 'B' tenham imprimido suas msgs
+	{
+		puts("Thread D bloqueada. Esperando 'count' chegar a 2");
 		pthread_cond_wait(&count_cond, &count_mutex);
-
+		puts("Thread D desbloqueada.");
+	}
 	puts("boa tarde!");
 	count++;
 	pthread_mutex_unlock(&count_mutex);
