@@ -21,7 +21,7 @@ void* A(void* t)
 	pthread_mutex_lock(&count_mutex);
 	puts("tudo bem?");
 	count++;
-	if(count == 2) //liberar a execucao de todas as threads se 'A' e 'B' ja imprimiram suas msgs
+	if(count == 2) //libera a execucao de todas as threads se 'A' e 'B' ja imprimiram suas msgs
 	{
 		puts("Thread A transmite que 'count' == 2");
 		pthread_cond_broadcast(&count_cond);
@@ -39,7 +39,7 @@ void* B(void* t)
 	pthread_mutex_lock(&count_mutex);
 	puts("bom dia!");
 	count++;
-	if(count == 2) //liberar a execucao de todas as threads se 'A' e 'B' ja imprimiram suas msgs
+	if(count == 2) //libera a execucao de todas as threads se 'A' e 'B' ja imprimiram suas msgs
 	{
 		puts("Thread B transmite que 'count' == 2");
 		pthread_cond_broadcast(&count_cond);
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 {
 	pthread_t threads[NTHREADS];
 
-	/* Inicilaiza o mutex (lock de exclusao mutua) e a variavel de condicao */
+	/* Inicilaiza o mutex e a variavel de condicao */
 	pthread_mutex_init(&count_mutex, NULL);
 	pthread_cond_init(&count_cond, NULL);
 
@@ -103,11 +103,12 @@ int main(int argc, char* argv[])
 	pthread_create(&threads[2], NULL, C, NULL);
 	pthread_create(&threads[3], NULL, D, NULL);
 
-	/* Espera todas as threads completarem */
+	/* Espera a execucao de todas as threads */
 	for(int i = 0; i < NTHREADS; i++)
 	{
-    	pthread_join(threads[i], NULL);
+    		pthread_join(threads[i], NULL);
 	}
+	
 	printf("FIM.\n");
 
 	/* Desaloca variaveis e termina */
